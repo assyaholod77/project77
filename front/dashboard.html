@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <title>Личный кабинет - MentorMatch</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <link rel="stylesheet" href="dashboard.css">
+
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // Главный компонент личного кабинета
+        function Dashboard() {
+            return (
+                <div className="dashboard-container">
+                    <DashboardHeader />
+                    <DashboardMain />
+                </div>
+            );
+        }
+
+        // Шапка личного кабинета
+        function DashboardHeader() {
+            const goToMain = () => {
+                window.location.href = 'index.html';
+            };
+
+            const logout = () => {
+                if (confirm('Вы уверены, что хотите выйти?')) {
+                    window.location.href = 'index.html';
+                }
+            };
+
+            return (
+                <header className="dashboard-header">
+                    <div className="header-left">
+                        <h1 className="logo">MentorMatch</h1>
+                        <nav className="dashboard-nav">
+                            <a href="index.html" className="nav-link">Главная</a>
+                            <a href="#profile" className="nav-link active">Профиль</a>
+                            <a href="#sessions" className="nav-link">Сессии</a>
+                            <a href="#reviews" className="nav-link">Отзывы</a>
+                        </nav>
+                    </div>
+                    <div className="header-right">
+                        <div className="user-info">
+                            <span className="user-name">Иван Иванов</span>
+                            <button className="logout-btn" onClick={logout}>Выйти</button>
+                        </div>
+                    </div>
+                </header>
+            );
+        }
+
+        // Основной контент личного кабинета
+        function DashboardMain() {
+            return (
+                <main className="dashboard-main">
+                    <StatsSection />
+                    <ChartsSection />
+                    <ReviewsSection />
+                    <SessionsSection />
+                </main>
+            );
+        }
+
+        // Блок статистики
+        function StatsSection() {
+            const stats = [
+                { icon: '📊', title: 'Всего сессий', value: '15', change: '+2 за месяц', positive: true },
+                { icon: '⭐', title: 'Средний рейтинг', value: '4.8', stars: '★★★★★' },
+                { icon: '⏱️', title: 'Часов обучения', value: '42.5', change: '+5.5 ч', positive: true },
+                { icon: '👥', title: 'Менторов', value: '6', change: 'активно: 3' }
+            ];
+
+            return (
+                <section className="stats-section">
+                    <h2>Общая статистика</h2>
+                    <div className="stats-grid">
+                        {stats.map((stat, index) => (
+                            <div key={index} className="stat-card">
+                                <div className="stat-icon">{stat.icon}</div>
+                                <div className="stat-info">
+                                    <h3>{stat.title}</h3>
+                                    <div className="stat-number">{stat.value}</div>
+                                    {stat.change && (
+                                        <div className={`stat-change ${stat.positive ? 'positive' : ''}`}>
+                                            {stat.change}
+                                        </div>
+                                    )}
+                                    {stat.stars && (
+                                        <div className="rating-stars">{stat.stars}</div>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            );
+        }
+
+        // Блок графиков
+        function ChartsSection() {
+            const chartRefs = {
+                sessions: useRef(null),
+                topics: useRef(null),
+                progress: useRef(null),
+                mentors: useRef(null)
+            };
+
+            useEffect(() => {
+                // Инициализация графиков после загрузки компонента
+                const initCharts = () => {
+                    // График сессий
+                    if (chartRefs.sessions.current) {
+                        new Chart(chartRefs.sessions.current, {
+                            type: 'line',
+                            data: {
+                                labels: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн'],
+                                datasets: [{
+                                    label: 'Количество сессий',
+                                    data: [3, 5, 4, 6, 8, 5],
+                                    borderColor: '#e5315b',
+                                    backgroundColor: 'rgba(229, 49, 91, 0.1)',
+                                    borderWidth: 3,
+                                    fill: true,
+                                    tension: 0.4
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false
+                            }
+                        });
+                    }
+
+                    // Круговая диаграмма тем
+                    if (chartRefs.topics.current) {
+                        new Chart(chartRefs.topics.current, {
+                            type: 'doughnut',
+                            data: {
+                                labels: ['JavaScript', 'React', 'Node.js', 'CSS'],
+                                datasets: [{
+                                    data: [35, 25, 20, 20],
+                                    backgroundColor: [
+                                        '#e5315b',
+                                        '#007bff',
+                                        '#28a745',
+                                        '#ffc107'
+                                    ]
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false
+                            }
+                        });
+                    }
+
+                    // График прогресса
+                    if (chartRefs.progress.current) {
+                        new Chart(chartRefs.progress.current, {
+                            type: 'bar',
+                            data: {
+                                labels: ['HTML/CSS', 'JavaScript', 'React', 'Node.js'],
+                                datasets: [{
+                                    label: 'Уровень владения (%)',
+                                    data: [85, 75, 60, 45],
+                                    backgroundColor: '#e5315b'
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        max: 100
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+                    // Радарный график менторов
+                    if (chartRefs.mentors.current) {
+                        new Chart(chartRefs.mentors.current, {
+                            type: 'radar',
+                            data: {
+                                labels: ['Знания', 'Объяснение', 'Поддержка', 'Гибкость'],
+                                datasets: [{
+                                    label: 'Дмитрий',
+                                    data: [4.8, 4.5, 4.7, 4.6],
+                                    backgroundColor: 'rgba(229, 49, 91, 0.2)',
+                                    borderColor: '#e5315b'
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    r: {
+                                        beginAtZero: true,
+                                        max: 5
+                                    }
+                                }
+                            }
+                        });
+                    }
+                };
+
+                initCharts();
+            }, []);
+
+            return (
+                <section className="charts-section">
+                    <div className="chart-row">
+                        <div className="chart-card">
+                            <h3>Посещаемость сессий по месяцам</h3>
+                            <div className="chart-container">
+                                <canvas ref={chartRefs.sessions} id="sessionsChart"></canvas>
+                            </div>
+                        </div>
+                        <div className="chart-card">
+                            <h3>Распределение по темам</h3>
+                            <div className="chart-container">
+                                <canvas ref={chartRefs.topics} id="topicsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="chart-row">
+                        <div className="chart-card">
+                            <h3>Прогресс обучения</h3>
+                            <div className="chart-container">
+                                <canvas ref={chartRefs.progress} id="progressChart"></canvas>
+                            </div>
+                        </div>
+                        <div className="chart-card">
+                            <h3>Рейтинг менторов</h3>
+                            <div className="chart-container">
+                                <canvas ref={chartRefs.mentors} id="mentorsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            );
+        }
+
+        // Блок отзывов
+        function ReviewsSection() {
+            const [reviews, setReviews] = useState([
+                {
+                    id: 1,
+                    mentor: 'Дмитрий (JavaScript)',
+                    rating: 5,
+                    title: 'Отличный ментор!',
+                    text: 'Дмитрий прекрасно объясняет сложные концепции JavaScript. Очень рекомендую для начинающих и продолжающих.',
+                    date: '2024-01-20'
+                },
+                {
+                    id: 2,
+                    mentor: 'Ярослав (C++)',
+                    rating: 4,
+                    title: 'Полезные сессии по C++',
+                    text: 'Ярослав помог разобраться с продвинутыми темами C++. Немного сложно для новичков, но очень информативно.',
+                    date: '2024-01-15'
+                }
+            ]);
+            const [showModal, setShowModal] = useState(false);
+            const [searchTerm, setSearchTerm] = useState('');
+            const [sortBy, setSortBy] = useState('newest');
+            const [newReview, setNewReview] = useState({
+                mentor: '',
+                rating: 0,
+                title: '',
+                text: ''
+            });
+
+            const filteredReviews = reviews
+                .filter(review => 
+                    review.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    review.text.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    review.mentor.toLowerCase().includes(searchTerm.toLowerCase())
+                )
+                .sort((a, b) => {
+                    switch (sortBy) {
+                        case 'newest':
+                            return new Date(b.date) - new Date(a.date);
+                        case 'oldest':
+                            return new Date(a.date) - new Date(b.date);
+                        case 'rating-high':
+                            return b.rating - a.rating;
+                        case 'rating-low':
+                            return a.rating - b.rating;
+                        default:
+                            return 0;
+                    }
+                });
+
+            const handleAddReview = (e) => {
+                e.preventDefault();
+                const review = {
+                    id: Date.now(),
+                    ...newReview,
+                    date: new Date().toISOString().split('T')[0]
+                };
+                setReviews([review, ...reviews]);
+                setShowModal(false);
+                setNewReview({ mentor: '', rating: 0, title: '', text: '' });
+            };
+
+            const handleDeleteReview = (id) => {
+                if (confirm('Вы уверены, что хотите удалить этот отзыв?')) {
+                    setReviews(reviews.filter(review => review.id !== id));
+                }
+            };
+
+            const setRating = (rating) => {
+                setNewReview({ ...newReview, rating });
+            };
+
+            return (
+                <section className="reviews-section" id="reviews">
+                    <div className="section-header">
+                        <h2>Мои отзывы</h2>
+                        <button className="btn-primary" onClick={() => setShowModal(true)}>
+                            + Написать отзыв
+                        </button>
+                    </div>
+                    
+                    <div className="reviews-controls">
+                        <div className="search-box">
+                            <input 
+                                type="text" 
+                                placeholder="Поиск по отзывам..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                            <span className="search-icon">🔍</span>
+                        </div>
+                        <select 
+                            className="sort-select"
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value)}
+                        >
+                            <option value="newest">Сначала новые</option>
+                            <option value="oldest">Сначала старые</option>
+                            <option value="rating-high">Высокий рейтинг</option>
+                            <option value="rating-low">Низкий рейтинг</option>
+                        </select>
+                    </div>
+
+                    <div className="reviews-grid">
+                        {filteredReviews.map(review => (
+                            <div key={review.id} className="review-card">
+                                <div className="review-header">
+                                    <div>
+                                        <div className="review-mentor">{review.mentor}</div>
+                                        <div className="review-date">{review.date}</div>
+                                    </div>
+                                    <div className="review-rating">
+                                        {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
+                                    </div>
+                                </div>
+                                <div className="review-title">{review.title}</div>
+                                <div className="review-text">{review.text}</div>
+                                <div className="review-actions">
+                                    <button className="btn-edit">Редактировать</button>
+                                    <button 
+                                        className="btn-delete"
+                                        onClick={() => handleDeleteReview(review.id)}
+                                    >
+                                        Удалить
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Модальное окно для нового отзыва */}
+                    <div className={`modal ${showModal ? 'show' : ''}`}>
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h3>Новый отзыв</h3>
+                                <button className="close-modal" onClick={() => setShowModal(false)}>
+                                    &times;
+                                </button>
+                            </div>
+                            <form className="review-form" onSubmit={handleAddReview}>
+                                <div className="form-group">
+                                    <label htmlFor="reviewMentor">Ментор</label>
+                                    <select 
+                                        id="reviewMentor"
+                                        value={newReview.mentor}
+                                        onChange={(e) => setNewReview({...newReview, mentor: e.target.value})}
+                                        required
+                                    >
+                                        <option value="">Выберите ментора</option>
+                                        <option value="Дмитрий (JavaScript)">Дмитрий (JavaScript)</option>
+                                        <option value="Ярослав (C++)">Ярослав (C++)</option>
+                                        <option value="Энн (Frontend)">Энн (Frontend)</option>
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <label>Оценка</label>
+                                    <div className="rating-input">
+                                        <div className="stars">
+                                            {[1, 2, 3, 4, 5].map(rating => (
+                                                <span
+                                                    key={rating}
+                                                    className={rating <= newReview.rating ? 'active' : ''}
+                                                    onClick={() => setRating(rating)}
+                                                >
+                                                    {rating <= newReview.rating ? '★' : '☆'}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="reviewTitle">Заголовок отзыва</label>
+                                    <input
+                                        type="text"
+                                        id="reviewTitle"
+                                        placeholder="Краткое описание"
+                                        value={newReview.title}
+                                        onChange={(e) => setNewReview({...newReview, title: e.target.value})}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="reviewText">Текст отзыва</label>
+                                    <textarea
+                                        id="reviewText"
+                                        placeholder="Поделитесь вашими впечатлениями..."
+                                        rows="5"
+                                        value={newReview.text}
+                                        onChange={(e) => setNewReview({...newReview, text: e.target.value})}
+                                        required
+                                    ></textarea>
+                                </div>
+                                <div className="form-actions">
+                                    <button 
+                                        type="button" 
+                                        className="btn-secondary"
+                                        onClick={() => setShowModal(false)}
+                                    >
+                                        Отмена
+                                    </button>
+                                    <button type="submit" className="btn-primary">
+                                        Опубликовать отзыв
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+            );
+        }
+
+        // Блок истории сессий
+        function SessionsSection() {
+            const [sessions] = useState([
+                { id: 1, date: '2024-01-20', mentor: 'Дмитрий', topic: 'JavaScript Advanced', duration: 2, rating: 5 },
+                { id: 2, date: '2024-01-18', mentor: 'Ярослав', topic: 'C++ Memory Management', duration: 1.5, rating: 4 },
+                { id: 3, date: '2024-01-15', mentor: 'Энн', topic: 'React Hooks', duration: 2, rating: 5 }
+            ]);
+
+            return (
+                <section className="sessions-section" id="sessions">
+                    <h2>История сессий</h2>
+                    <div className="sessions-table-container">
+                        <table className="sessions-table">
+                            <thead>
+                                <tr>
+                                    <th>Дата</th>
+                                    <th>Ментор</th>
+                                    <th>Тема</th>
+                                    <th>Длительность</th>
+                                    <th>Оценка</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {sessions.map(session => (
+                                    <tr key={session.id}>
+                                        <td>{session.date}</td>
+                                        <td>{session.mentor}</td>
+                                        <td>{session.topic}</td>
+                                        <td>{session.duration} ч</td>
+                                        <td>{'★'.repeat(session.rating)}{'☆'.repeat(5 - session.rating)}</td>
+                                        <td>
+                                            <button className="btn-edit">✏️</button>
+                                            <button className="btn-delete">🗑️</button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            );
+        }
+
+        // Рендерим приложение
+        ReactDOM.render(<Dashboard />, document.getElementById('root'));
+    </script>
+</body>
+</html>

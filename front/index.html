@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <title>MentorMatch</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        /* ВАШ CSS КОД */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat Alternates', sans-serif;
+            line-height: 1.6;
+        }
+
+        /* Шапка */
+        .header {
+            width: 100%; 
+            height: 80px; 
+            background-color: #171717; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed; 
+            transition: all 0.9s ease; 
+            z-index: 1000;
+            color: white;
+            border-radius: 0px 0px 50px 50px;
+        }
+
+        .logo p {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            font-weight: bold;
+        }
+
+        /* Блок 1 - Герой */
+        .block1 {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: auto 1fr;
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            background: linear-gradient(90deg, rgba(255,255,255,1) 30%, rgba(229,120,144,1) 100%);
+            padding-top: 80px;
+        }
+
+        .block_mentor_about {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            z-index: 2;
+        }
+
+        .mentor_description {
+            color: #000000;
+            width: 100%;
+        }
+
+        .mentor_sreach p {
+            font-family: 'Arial', sans-serif;
+            font-size: clamp(1.5rem, 5vw, 3rem);
+            margin: 0;
+            font-weight: bold;
+            line-height: 1.2;
+        }
+
+        .mentor_give p {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            margin-top: 1.5rem;
+            max-width: 500px;
+        }
+
+        .animated-line {
+            position: relative;
+            display: block;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.0);
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .animated-line::before {
+            content: '';
+            position: absolute;
+            left: -100%;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            background: #e5315b;
+            animation: slide 5s ease-in-out infinite;
+        }
+
+        @keyframes slide {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(100%); }
+            100% { transform: translateX(201%); }
+        }
+
+        .topnav1 {
+            font-family: 'Montserrat Alternates';
+            display: inline-flex;
+            width: auto;
+            min-width: 200px;
+            height: 64px;
+            border-radius: 35px;
+            background: #6a1628;
+            justify-content: center;
+            align-items: center;
+            margin-top: 2rem;
+            z-index: 3;
+            transition: all 0.3s ease;
+            padding: 0 2rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        .topnav1:hover {
+            background: #e5315b;
+            transform: translateY(-2px);
+        }
+
+        .dashboard-btn {
+            color: white;
+            font-size: 1rem;
+            font-weight: 550;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: 'Montserrat Alternates';
+        }
+
+    
+
+        /* Блок 2 - Менторы */
+        .block2 {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            background-color: #dcdcdc;
+            padding: 4rem 1rem;
+        }
+
+        .our_mentors {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
+
+        .our_mentors p {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            margin: 0;
+            font-weight: bold;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .mentors {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .mentor_cart {
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .mentor_cart:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .photo_mentor {
+            width: 100%;
+            height: 300px;
+            border-radius: 25px 25px 0 0;
+            background-size: cover;
+            background-position: center;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* Стили для фото менторов - используем градиенты как заглушки */
+        .ph1 { 
+            background: linear-gradient(135deg, #e5315b8f 0%, #9b959781 100%);
+            color: white;
+        }
+        .ph2 { 
+            background: linear-gradient(135deg, #9b959781 0%, #e5315b8f  100%);
+            color: white;
+        }
+        .ph3 { 
+            background: linear-gradient(135deg, #e5315b8f 0%, #9b959781 100%);
+            color: white;
+        }
+        .ph4 { 
+            background: linear-gradient(135deg, #9b959781, #e5315b8f 100%);
+            color: white;
+        }
+        .ph5 { 
+            background: linear-gradient(135deg, #e5315b8f 0%, #9b959781 100%);
+            color: white;
+        }
+        .ph6 { 
+            background: linear-gradient(135deg, #9b959781, #e5315b8f 100%);
+            color: #ffffff;
+        }
+
+        .name_mentor {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .name_mentor p {
+            font-family: 'Montserrat Alternates';
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .speciality_mentor {
+            display: flex;
+            justify-content: center;
+            margin: 0.5rem 0;
+        }
+
+        .speciality_mentor p {
+            font-family: 'Montserrat Alternates';
+            font-size: 1.1rem;
+            text-align: center;
+            margin: 0;
+            color: #666;
+        }
+
+        .profs_mentor {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 1rem;
+        }
+
+        .prof {
+            display: inline-flex;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            border: 1px solid black;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .prof p {
+            font-family: 'Montserrat Alternates';
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        /* Блок 3 - Регистрация */
+        .block3 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            width: 100%;
+            background-color: #dcdcdc;
+            padding: 2rem 1rem;
+        }
+
+        .reg_block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            padding: 2rem;
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        #register {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        #register p {
+            font-size: 1.5rem;
+            font-family: 'Montserrat Alternates';
+            text-align: center;
+            margin-bottom: 2rem;
+            font-weight: 500;
+        }
+
+        input {
+            border: none;
+            border-bottom: 2px solid #000;
+            outline: none;
+            padding: 1rem 0.5rem;
+            width: 100%;
+            font-family: 'Montserrat Alternates';
+            background: transparent;
+            font-size: 1rem;
+        }
+
+        #reg_but {
+            color: white;
+            width: 100%;
+            max-width: 290px;
+            height: 50px;
+            border-radius: 12px;
+            border: none;
+            background-color: #6a1628;
+            font-family: 'Montserrat Alternates';
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #reg_but:hover {
+            background-color: #e5315b;
+            transform: translateY(-2px);
+        }
+
+        #res_sam {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Карта */
+        .map-section {
+            padding: 4rem 1rem;
+            background-color: #dcdcdc;
+        }
+
+        .map-section h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            font-family: 'Arial', sans-serif;
+        }
+
+        #mentorsMap {
+            height: 500px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Остальные блоки (отзывы, о проекте, футер) */
+        .block4 {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            background-color: #dcdcdc;
+            padding: 4rem 1rem;
+        }
+
+        .block_comment {
+            display: flex;
+            flex-direction: column;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .com1 {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 2rem;
+        }
+
+        .com_line {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .mark1 {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .com_logo p {
+            font-size: 2rem;
+        }
+
+        .com_logo p span {
+            color: #ec325b;
+            font-weight: bold;
+        }
+
+        .number p {
+            font-size: 1.5rem;
+        }
+
+        .com_but1, .com_but2 {
+            font-family: 'Montserrat Alternates';
+            display: inline-flex;
+            width: auto;
+            min-width: 170px;
+            height: 47px;
+            border-radius: 18px;
+            background: #6a1628;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s ease;
+            position: static;
+            margin: 1rem 0;
+            border: none;
+            cursor: pointer;
+        }
+
+        .com_but1:hover, .com_but2:hover {
+            background: #e5315b;
+            transform: translateY(-2px);
+        }
+
+        .com2 {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 2rem;
+            padding: 2rem 0;
+            border-top: 1px solid black;
+            align-items: start;
+        }
+
+        .com_about_logo {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .com_logo2 p {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .com_descr p {
+            line-height: 1.6;
+            color: #555;
+        }
+
+        /* Блок 5 - О проекте */
+        .block5 {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            background: linear-gradient(180deg, rgba(220,219,219,1) 20%, rgba(229,124,147,1) 100%);
+            padding: 4rem 1rem;
+        }
+
+        .block_about_project {
+            display: flex;
+            flex-direction: column;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            position: relative;
+        }
+
+        .about_project {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 3rem;
+        }
+
+        .project_description1 {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .project_description1 p span {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        #ehe {
+            color: #808080;
+            display: inline-flex;
+            justify-content: center;
+            margin: 2rem auto 0;
+            text-decoration: none;
+            font-size: 1.1rem;
+        }
+
+        /* Футер */
+        .block6 {
+            font-family: 'Montserrat Alternates';
+            width: 100%;
+            background-color: #171717;
+            color: #dcdcdc;
+            padding: 3rem 1rem;
+        }
+
+        .footer {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .colum {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .foter_logo p {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .fot_log_disc, .adress {
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .frlg {
+            margin-bottom: 1rem;
+        }
+
+        .frlg p {
+            font-size: 1.2rem;
+            font-weight: 550;
+        }
+
+        .frds {
+            line-height: 1.6;
+        }
+
+        .tel p {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .block_mentor_about {
+                text-align: center;
+                align-items: center;
+            }
+            
+            .mentors {
+                grid-template-columns: 1fr;
+            }
+            
+            .com2 {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .footer {
+                grid-template-columns: 1fr;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // Главный компонент приложения
+        function App() {
+            return (
+                <div className="App">
+                    <Header />
+                    <Hero />
+                    <Mentors />
+                    <Registration />
+                    <MapSection />
+                    <Reviews />
+                    <About />
+                    <Footer />
+                </div>
+            );
+        }
+
+        // Компонент шапки
+        function Header() {
+            return (
+                <header className="header">
+                    <nav>
+                        <div className="logo">
+                            <p>MentorMatch</p>
+                        </div>
+                    </nav>
+                </header>
+            );
+        }
+
+        // Герой-секция
+        function Hero() {
+            const goToDashboard = () => {
+                alert('Переход в личный кабинет!');
+            };
+
+            return (
+                <div className="block1">
+                    <div className="block_mentor_about">
+                        <div className="mentor_description">
+                            <div className="mentor_sreach">
+                                <p>Найди своего ментора!</p>
+                                <span className="animated-line"></span>
+                            </div>
+                            <div className="mentor_give">
+                                <p>Получите советы по карьере,<br />учебе и личностному развитию</p>
+                            </div>
+                        </div>
+                        <div className="topnav1">
+                            <button onClick={goToDashboard} className="dashboard-btn">
+                                Личный кабинет
+                            </button>
+                        </div>
+                    </div>
+                    <div className="zavitok"></div>
+                </div>
+            );
+        }
+
+        // Компонент менторов
+        function Mentors() {
+            const mentors = [
+                {
+                    id: 1,
+                    name: "Дмитрий",
+                    specialty: "Главный инженер - программист",
+                    skills: ["JavaScript", "NodeJS"],
+                    photo: "ph1"
+                },
+                {
+                    id: 2,
+                    name: "Ярослав", 
+                    specialty: "Технический директор",
+                    skills: ["C++"],
+                    photo: "ph2"
+                },
+                {
+                    id: 3,
+                    name: "Энн",
+                    specialty: "Старший Frontend-разработчик", 
+                    skills: ["Интерфейс", "Tilda"],
+                    photo: "ph3"
+                },
+                {
+                    id: 4,
+                    name: "Дмитрий",
+                    specialty: "Старший Дизайнер продукта",
+                    skills: ["CSS"],
+                    photo: "ph4"
+                },
+                {
+                    id: 5,
+                    name: "Егор",
+                    specialty: "Графический дизайнер, видеопроизводство",
+                    skills: ["Брендинг", "Бизнес"],
+                    photo: "ph5"
+                },
+                {
+                    id: 6,
+                    name: "Юрий",
+                    specialty: "Инженер по облачным технологиям и DevOps",
+                    skills: ["AWS", "Облако"],
+                    photo: "ph6"
+                }
+            ];
+
+            return (
+                <div className="block2">
+                    <div className="our_mentors">
+                        <p>Наши менторы</p>
+                    </div>
+                    <div className="mentors">
+                        {mentors.map(mentor => (
+                            <div key={mentor.id} className="mentor_cart">
+                                <div className={`photo_mentor ${mentor.photo}`}>
+                                    {mentor.name}
+                                </div>
+                                <div className="name_mentor">
+                                    <p>{mentor.name}</p>
+                                </div>
+                                <div className="speciality_mentor">
+                                    <p>{mentor.specialty}</p>
+                                </div>
+                                <div className="profs_mentor">
+                                    {mentor.skills.map((skill, index) => (
+                                        <div key={index} className="prof">
+                                            <p>{skill}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        // Компонент регистрации
+        function Registration() {
+            const [formData, setFormData] = useState({
+                email: '',
+                password: ''
+            });
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                alert(`Регистрация успешна! Email: ${formData.email}`);
+                setFormData({ email: '', password: '' });
+            };
+
+            const handleChange = (e) => {
+                setFormData({
+                    ...formData,
+                    [e.target.name]: e.target.value
+                });
+            };
+
+            return (
+                <div className="block3">
+                    <div className="reg_block">
+                        <form id="register" onSubmit={handleSubmit}>
+                            <p>Зарегистрируйся прямо сейчас</p>
+                            <div className="email">
+                                <input
+                                    type="email"
+                                    name="email"
+                                    placeholder="Почта"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+                            <div className="password">
+                                <input
+                                    type="password" 
+                                    name="password"
+                                    placeholder="Пароль"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+                            <div id="res_sam">
+                                <input type="submit" id="reg_but" value="Поехали!" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            );
+        }
+
+        // Компонент карты
+        function MapSection() {
+            const mapRef = useRef(null);
+
+            useEffect(() => {
+                
+                const loadYandexMap = () => {
+                    if (window.ymaps && mapRef.current) {
+                        window.ymaps.ready(() => {
+                            
+                            const map = new window.ymaps.Map(mapRef.current, {
+                                center: [47.222109, 39.718813], 
+                                zoom: 10
+                            });
+
+                            //  метки менторов
+                            const mentors = [
+                                {
+                                    coords: [47.221405, 39.718669],
+                                    name: "Дмитрий",
+                                    specialty: "JavaScript Developer",
+                                    color: "red"
+                                },
+                                {
+                                    coords: [47.232346, 39.700900],
+                                    name: "Ярослав", 
+                                    specialty: "C++ Expert",
+                                    color: "blue"
+                                },
+                                {
+                                    coords: [47.220866, 39.712767],
+                                    name: "Энн",
+                                    specialty: "Frontend Developer",
+                                    color: "violet"
+                                },
+                                {
+                                    coords: [47.235075, 39.705473],
+                                    name: "Егор",
+                                    specialty: "Graphic Designer",
+                                    color: "green"
+                                },
+                                {
+                                    coords: [47.226368, 39.734066],
+                                    name: "Юрий",
+                                    specialty: "DevOps Engineer", 
+                                    color: "orange"
+                                }
+                            ];
+
+                            mentors.forEach(mentor => {
+                                const marker = new window.ymaps.Placemark(
+                                    mentor.coords,
+                                    {
+                                        balloonContent: `
+                                            <div style="padding: 10px;">
+                                                <h3 style="margin: 0 0 10px 0; color: #e5315b;">${mentor.name}</h3>
+                                                <p style="margin: 0; color: #333;">${mentor.specialty}</p>
+                                                <button onclick="alert('Запись к ${mentor.name}')" 
+                                                        style="margin-top: 10px; padding: 5px 10px; background: #e5315b; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                                                    Записаться на консультацию
+                                                </button>
+                                            </div>
+                                        `
+                                    },
+                                    {
+                                        preset: 'islands#dotIcon',
+                                        iconColor: mentor.color
+                                    }
+                                );
+
+                                map.geoObjects.add(marker);
+                            });
+
+                            // Добавляем элементы управления
+                            map.controls.remove('geolocationControl');
+                            map.controls.remove('searchControl');
+                            map.controls.remove('trafficControl');
+                            map.controls.remove('typeSelector');
+                            map.controls.remove('fullscreenControl');
+                            map.controls.remove('rulerControl');
+                        });
+                    }
+                };
+
+                // Если Яндекс Карты уже загружены
+                if (window.ymaps) {
+                    loadYandexMap();
+                } else {
+                    // Загружаем Яндекс Карты
+                    const script = document.createElement('script');
+                    script.src = 'https://api-maps.yandex.ru/2.1/?apikey=ваш_api_ключ&lang=ru_RU';
+                    script.onload = loadYandexMap;
+                    document.head.appendChild(script);
+                }
+            }, []);
+
+            return (
+                <div className="map-section">
+                    <h2>Наши менторы на карте</h2>
+                    <div id="mentorsMap" ref={mapRef}></div>
+                </div>
+            );
+        }
+
+        // Компонент отзывов
+        function Reviews() {
+            const [showMore, setShowMore] = useState(false);
+
+            return (
+                <div className="block4">
+                    <div className="block_comment">
+                        <div className="com1">
+                            <div className="com_logo"><p>Отзывы <span>1151</span></p></div>
+                            <div className="com_line">
+                                <div className="mark1">
+                                    <div className="number"><p>5 <span>/ 5</span></p></div>
+                                    
+                                </div>
+                                <div className="com_but1">
+                                    <button>Написать отзыв</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="com2">
+                            <div className="mark2">
+                                <div className="number" id="n1"><p>Ольга</p></div>
+                                
+                            </div>
+                            <div className="com_about_logo">
+                                <div className="com_logo2">
+                                    <p>Очень удобный сайт по сравнению с конкурентами</p>
+                                </div>
+                                <div className="com_descr">
+                                    <p>После многих лет самостоятельного обучения по книгам и курсам я наконец-то присоединился к MentorCruise. После нескольких занятий мои ощущения полностью изменились. Я отчётливо вижу свой прогресс — 100% соотношение цены и качества</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="com_but2">
+                        <button onClick={() => setShowMore(!showMore)}>
+                            {showMore ? 'Скрыть' : 'Показать ещё'}
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        // Компонент "О проекте"
+        function About() {
+            return (
+                <div className="block5">
+                    <div className="block_about_project">
+                        <div className="about_project">
+                            <p>О проекте</p>
+                        </div>
+                        <div className="project_description1">
+                            <p><span>MentorMatch</span> представляет собой онлайн-сервис, который соединяет студентов и молодых специалистов с опытными менторами в различных областях. Платформа предоставляет возможность пользователям находить наставников, которые помогут им в карьерном развитии, учебе и личностном росте.</p>
+                        </div>
+                        <div className="project_description1">
+                            <p>Каждый пользователь может выбрать ментора, который соответствует его интересам и целям. Это позволяет создать персонализированный опыт, где ментор может адаптировать свои советы и рекомендации в зависимости от уникальных потребностей и обстоятельств ученика.</p>
+                        </div>
+                        <div className="project_description1">
+                            <p>Платформа ориентирована на студентов, молодых специалистов и всех, кто стремится развиваться в своей профессиональной области. Она будет полезна тем, кто ищет поддержку в учебе, хочет улучшить свои навыки или получить советы по карьерным вопросам.</p>
+                        </div>
+                        <a href="#" id="ehe">Ещё...</a>
+                    </div>
+                </div>
+            );
+        }
+
+        // Компонент футера
+        function Footer() {
+            return (
+                <div className="block6">
+                    <div className="footer">
+                        <div className="colum">
+                            <div className="foter_logo">
+                                <p>MentorMatch</p>
+                            </div>
+                            <div className="fot_log_disc">
+                                <p>Ваш надёжный источник для поиска проверенных наставников и профессионалов отрасли, которые помогут вам продвинуться по карьерной лестнице.</p>
+                            </div>
+                            <div className="adress">
+                                <p>просп. Богатяновский Спуск, 32/162, в Ростов‑на‑Дону</p>
+                            </div>
+                            <div className="tel">
+                                <p>+7 909 301 18 07</p>
+                            </div>
+                        </div>
+                        <div className="colum">
+                            <div className="frlg">
+                                <p>Главная</p>
+                            </div>
+                            <div className="frds">
+                                <p>Просмотр Наставников Запишитесь на Сеанс Станьте наставником Наставничество для команд</p>
+                            </div>
+                        </div>
+                        <div className="colum">
+                            <div className="frlg">
+                                <p>Менторы</p>
+                            </div>
+                            <div className="frds">
+                                <p>Рассылка Книги Льготы Шаблоны Карьерные пути Блог</p>
+                            </div>
+                        </div>
+                        <div className="colum">
+                            <div className="frlg">
+                                <p>Отзывы</p>
+                            </div>
+                            <div className="frds">
+                                <p>Новости Вопросы и ответы</p>
+                            </div>
+                        </div>
+                        <div className="colum">
+                            <div className="frlg">
+                                <p>О проекте</p>
+                            </div>
+                            <div className="frds">
+                                <p>Контакты Политика конфиденциальности Примеры внедрения Партнерская Программа Кодекс поведения</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Рендерим приложение
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
