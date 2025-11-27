@@ -11,8 +11,526 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Montserrat Alternates', sans-serif;
+            background: linear-gradient(90deg, rgba(255,255,255,1) 30%, rgba(229,120,144,1) 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .dashboard-container {
+            min-height: 100vh;
+            background: rgb(220, 220, 220);
+        }
+
+        /* Шапка */
+        .dashboard-header {
+            background-color: #171717; 
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+        }
+
+        .logo {
+            font-family: 'Arial', sans-serif;
+            font-size: 2rem;
+            color: #e5315b;
+            margin: 0;
+            font-weight: bold;
+        }
+
+        .dashboard-nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #666;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: #e5315b;
+            background: rgba(229, 49, 91, 0.1);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: white;
+        }
+
+        .logout-btn {
+            background: #e5315b;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #c41c4a;
+        }
+
+        /* Основной контент */
+        .dashboard-main {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Статистика */
+        .stats-section h2 {
+            margin-bottom: 1.5rem;
+            color: #333;
+            font-size: 1.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(229, 49, 91, 0.1);
+            border-radius: 12px;
+        }
+
+        .stat-info h3 {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #e5315b;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-change {
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .stat-change.positive {
+            color: #10b981;
+        }
+
+        .rating-stars {
+            color: #ffc107;
+            font-size: 1rem;
+        }
+
+        /* Расписание менторов */
+        .schedule-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 3rem;
+        }
+
+        .schedule-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .schedule-header h2 {
+            color: #333;
+            font-size: 1.5rem;
+        }
+
+        .mentors-filter {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .mentors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .mentor-schedule-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .mentor-schedule-card:hover {
+            border-color: #e5315b;
+            transform: translateY(-2px);
+        }
+
+        .mentor-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .mentor-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .mentor-info h3 {
+            margin: 0;
+            color: #333;
+        }
+
+        .mentor-specialty {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .schedule-slots {
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .time-slot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .slot-time {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .slot-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .slot-available {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .slot-booked {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .book-btn {
+            background: #e5315b;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: background 0.3s ease;
+        }
+
+        .book-btn:hover:not(:disabled) {
+            background: #c41c4a;
+        }
+
+        .book-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        /* Модальное окно записи */
+        .booking-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .booking-modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .booking-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .booking-header h3 {
+            margin: 0;
+            color: #333;
+        }
+
+        .close-booking {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .booking-details {
+            margin-bottom: 1.5rem;
+        }
+
+        .booking-mentor {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #e5315b;
+            margin-bottom: 0.5rem;
+        }
+
+        .booking-time {
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .btn-primary {
+            background: #e5315b;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 500;
+            transition: background 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: #c41c4a;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        /* Остальные стили (графики, отзывы, сессии) остаются прежними */
+        .charts-section {
+            margin-bottom: 3rem;
+        }
+
+        .chart-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .chart-card h3 {
+            margin-bottom: 1rem;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .chart-container {
+            height: 250px;
+            position: relative;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .header-left {
+                flex-direction: column;
+                gap: 1rem;
+                width: 100%;
+            }
+
+            .dashboard-nav {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .dashboard-main {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-row {
+                grid-template-columns: 1fr;
+            }
+
+            .mentors-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .schedule-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .mentors-filter {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
+        /* Стили для активных ссылок навигации */
+        .nav-link.active {
+            background: #e5315b;
+            color: white;
+        }
+    </style>
 </head>
 <body>
     <div id="root"></div>
@@ -32,10 +550,6 @@
 
         // Шапка личного кабинета
         function DashboardHeader() {
-            const goToMain = () => {
-                window.location.href = 'index.html';
-            };
-
             const logout = () => {
                 if (confirm('Вы уверены, что хотите выйти?')) {
                     window.location.href = 'index.html';
@@ -49,6 +563,7 @@
                         <nav className="dashboard-nav">
                             <a href="index.html" className="nav-link">Главная</a>
                             <a href="#profile" className="nav-link active">Профиль</a>
+                            <a href="#schedule" className="nav-link">Расписание</a>
                             <a href="#sessions" className="nav-link">Сессии</a>
                             <a href="#reviews" className="nav-link">Отзывы</a>
                         </nav>
@@ -68,6 +583,7 @@
             return (
                 <main className="dashboard-main">
                     <StatsSection />
+                    <ScheduleSection />
                     <ChartsSection />
                     <ReviewsSection />
                     <SessionsSection />
@@ -110,117 +626,253 @@
             );
         }
 
-        // Блок графиков
+        // Блок расписания менторов
+        function ScheduleSection() {
+            const [mentors, setMentors] = useState([
+                {
+                    id: 1,
+                    name: 'Дмитрий',
+                    specialty: 'JavaScript Developer',
+                    avatar: 'Д',
+                    schedule: [
+                        { id: 1, time: '10:00 - 11:00', available: true },
+                        { id: 2, time: '11:30 - 12:30', available: true },
+                        { id: 3, time: '14:00 - 15:00', available: false },
+                        { id: 4, time: '16:00 - 17:00', available: true }
+                    ]
+                },
+                {
+                    id: 2,
+                    name: 'Ярослав',
+                    specialty: 'C++ Expert',
+                    avatar: 'Я',
+                    schedule: [
+                        { id: 1, time: '09:00 - 10:00', available: true },
+                        { id: 2, time: '11:00 - 12:00', available: false },
+                        { id: 3, time: '13:00 - 14:00', available: true },
+                        { id: 4, time: '15:00 - 16:00', available: true }
+                    ]
+                },
+                {
+                    id: 3,
+                    name: 'Энн',
+                    specialty: 'Frontend Developer',
+                    avatar: 'Э',
+                    schedule: [
+                        { id: 1, time: '10:30 - 11:30', available: false },
+                        { id: 2, time: '12:00 - 13:00', available: true },
+                        { id: 3, time: '14:30 - 15:30', available: true },
+                        { id: 4, time: '16:30 - 17:30', available: true }
+                    ]
+                }
+            ]);
+
+            const [selectedMentor, setSelectedMentor] = useState(null);
+            const [selectedSlot, setSelectedSlot] = useState(null);
+            const [showBookingModal, setShowBookingModal] = useState(false);
+            const [bookingForm, setBookingForm] = useState({
+                topic: '',
+                notes: ''
+            });
+
+            const handleBookSession = (mentor, slot) => {
+                setSelectedMentor(mentor);
+                setSelectedSlot(slot);
+                setShowBookingModal(true);
+            };
+
+            const handleConfirmBooking = (e) => {
+                e.preventDefault();
+                
+                // Обновляем расписание - помечаем слот как занятый
+                const updatedMentors = mentors.map(mentor => {
+                    if (mentor.id === selectedMentor.id) {
+                        return {
+                            ...mentor,
+                            schedule: mentor.schedule.map(slot =>
+                                slot.id === selectedSlot.id 
+                                    ? { ...slot, available: false }
+                                    : slot
+                            )
+                        };
+                    }
+                    return mentor;
+                });
+
+                setMentors(updatedMentors);
+                
+                alert(`Запись успешно оформлена!\nМентор: ${selectedMentor.name}\nВремя: ${selectedSlot.time}\nТема: ${bookingForm.topic}`);
+                
+                setShowBookingModal(false);
+                setSelectedMentor(null);
+                setSelectedSlot(null);
+                setBookingForm({ topic: '', notes: '' });
+            };
+
+            const handleFilterChange = (filter) => {
+                // Здесь можно добавить логику фильтрации
+                console.log('Filter changed:', filter);
+            };
+
+            return (
+                <section className="schedule-section" id="schedule">
+                    <div className="schedule-header">
+                        <h2>Расписание менторов</h2>
+                        <div className="mentors-filter">
+                            <select onChange={(e) => handleFilterChange(e.target.value)}>
+                                <option value="all">Все менторы</option>
+                                <option value="javascript">JavaScript</option>
+                                <option value="cpp">C++</option>
+                                <option value="frontend">Frontend</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="mentors-grid">
+                        {mentors.map(mentor => (
+                            <div key={mentor.id} className="mentor-schedule-card">
+                                <div className="mentor-header">
+                                    <div className="mentor-avatar">{mentor.avatar}</div>
+                                    <div className="mentor-info">
+                                        <h3>{mentor.name}</h3>
+                                        <div className="mentor-specialty">{mentor.specialty}</div>
+                                    </div>
+                                </div>
+                                
+                                <div className="schedule-slots">
+                                    {mentor.schedule.map(slot => (
+                                        <div key={slot.id} className="time-slot">
+                                            <span className="slot-time">{slot.time}</span>
+                                            <span className={`slot-status ${slot.available ? 'slot-available' : 'slot-booked'}`}>
+                                                {slot.available ? 'Свободно' : 'Занято'}
+                                            </span>
+                                            <button
+                                                className="book-btn"
+                                                onClick={() => handleBookSession(mentor, slot)}
+                                                disabled={!slot.available}
+                                            >
+                                                Записаться
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Модальное окно записи */}
+                    {showBookingModal && (
+                        <div className="booking-modal">
+                            <div className="booking-modal-content">
+                                <div className="booking-header">
+                                    <h3>Запись на сессию</h3>
+                                    <button 
+                                        className="close-booking"
+                                        onClick={() => setShowBookingModal(false)}
+                                    >
+                                        &times;
+                                    </button>
+                                </div>
+                                
+                                <div className="booking-details">
+                                    <div className="booking-mentor">{selectedMentor?.name}</div>
+                                    <div className="booking-time">{selectedSlot?.time}</div>
+                                </div>
+
+                                <form onSubmit={handleConfirmBooking}>
+                                    <div className="form-group">
+                                        <label htmlFor="topic">Тема занятия</label>
+                                        <input
+                                            type="text"
+                                            id="topic"
+                                            placeholder="Например: JavaScript Promises"
+                                            value={bookingForm.topic}
+                                            onChange={(e) => setBookingForm({...bookingForm, topic: e.target.value})}
+                                            required
+                                        />
+                                    </div>
+                                    
+                                    <div className="form-group">
+                                        <label htmlFor="notes">Дополнительные пожелания</label>
+                                        <textarea
+                                            id="notes"
+                                            placeholder="Что бы вы хотели обсудить на занятии?"
+                                            value={bookingForm.notes}
+                                            onChange={(e) => setBookingForm({...bookingForm, notes: e.target.value})}
+                                        />
+                                    </div>
+
+                                    <div className="form-actions">
+                                        <button 
+                                            type="button" 
+                                            className="btn-secondary"
+                                            onClick={() => setShowBookingModal(false)}
+                                        >
+                                            Отмена
+                                        </button>
+                                        <button type="submit" className="btn-primary">
+                                            Подтвердить запись
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+                </section>
+            );
+        }
+
+        // Блок графиков (упрощенная версия)
         function ChartsSection() {
             const chartRefs = {
                 sessions: useRef(null),
-                topics: useRef(null),
-                progress: useRef(null),
-                mentors: useRef(null)
+                topics: useRef(null)
             };
 
             useEffect(() => {
-                // Инициализация графиков после загрузки компонента
-                const initCharts = () => {
-                    // График сессий
-                    if (chartRefs.sessions.current) {
-                        new Chart(chartRefs.sessions.current, {
-                            type: 'line',
-                            data: {
-                                labels: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн'],
-                                datasets: [{
-                                    label: 'Количество сессий',
-                                    data: [3, 5, 4, 6, 8, 5],
-                                    borderColor: '#e5315b',
-                                    backgroundColor: 'rgba(229, 49, 91, 0.1)',
-                                    borderWidth: 3,
-                                    fill: true,
-                                    tension: 0.4
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false
-                            }
-                        });
-                    }
+                if (chartRefs.sessions.current) {
+                    new Chart(chartRefs.sessions.current, {
+                        type: 'line',
+                        data: {
+                            labels: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн'],
+                            datasets: [{
+                                label: 'Количество сессий',
+                                data: [3, 5, 4, 6, 8, 5],
+                                borderColor: '#e5315b',
+                                backgroundColor: 'rgba(229, 49, 91, 0.1)',
+                                borderWidth: 3,
+                                fill: true,
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false
+                        }
+                    });
+                }
 
-                    // Круговая диаграмма тем
-                    if (chartRefs.topics.current) {
-                        new Chart(chartRefs.topics.current, {
-                            type: 'doughnut',
-                            data: {
-                                labels: ['JavaScript', 'React', 'Node.js', 'CSS'],
-                                datasets: [{
-                                    data: [35, 25, 20, 20],
-                                    backgroundColor: [
-                                        '#e5315b',
-                                        '#007bff',
-                                        '#28a745',
-                                        '#ffc107'
-                                    ]
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false
-                            }
-                        });
-                    }
-
-                    // График прогресса
-                    if (chartRefs.progress.current) {
-                        new Chart(chartRefs.progress.current, {
-                            type: 'bar',
-                            data: {
-                                labels: ['HTML/CSS', 'JavaScript', 'React', 'Node.js'],
-                                datasets: [{
-                                    label: 'Уровень владения (%)',
-                                    data: [85, 75, 60, 45],
-                                    backgroundColor: '#e5315b'
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                scales: {
-                                    y: {
-                                        beginAtZero: true,
-                                        max: 100
-                                    }
-                                }
-                            }
-                        });
-                    }
-
-                    // Радарный график менторов
-                    if (chartRefs.mentors.current) {
-                        new Chart(chartRefs.mentors.current, {
-                            type: 'radar',
-                            data: {
-                                labels: ['Знания', 'Объяснение', 'Поддержка', 'Гибкость'],
-                                datasets: [{
-                                    label: 'Дмитрий',
-                                    data: [4.8, 4.5, 4.7, 4.6],
-                                    backgroundColor: 'rgba(229, 49, 91, 0.2)',
-                                    borderColor: '#e5315b'
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                scales: {
-                                    r: {
-                                        beginAtZero: true,
-                                        max: 5
-                                    }
-                                }
-                            }
-                        });
-                    }
-                };
-
-                initCharts();
+                if (chartRefs.topics.current) {
+                    new Chart(chartRefs.topics.current, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['JavaScript', 'React', 'Node.js', 'CSS'],
+                            datasets: [{
+                                data: [35, 25, 20, 20],
+                                backgroundColor: [
+                                    '#e5315b',
+                                    '#007bff',
+                                    '#28a745',
+                                    '#ffc107'
+                                ]
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false
+                        }
+                    });
+                }
             }, []);
 
             return (
@@ -229,27 +881,13 @@
                         <div className="chart-card">
                             <h3>Посещаемость сессий по месяцам</h3>
                             <div className="chart-container">
-                                <canvas ref={chartRefs.sessions} id="sessionsChart"></canvas>
+                                <canvas ref={chartRefs.sessions}></canvas>
                             </div>
                         </div>
                         <div className="chart-card">
                             <h3>Распределение по темам</h3>
                             <div className="chart-container">
-                                <canvas ref={chartRefs.topics} id="topicsChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="chart-row">
-                        <div className="chart-card">
-                            <h3>Прогресс обучения</h3>
-                            <div className="chart-container">
-                                <canvas ref={chartRefs.progress} id="progressChart"></canvas>
-                            </div>
-                        </div>
-                        <div className="chart-card">
-                            <h3>Рейтинг менторов</h3>
-                            <div className="chart-container">
-                                <canvas ref={chartRefs.mentors} id="mentorsChart"></canvas>
+                                <canvas ref={chartRefs.topics}></canvas>
                             </div>
                         </div>
                     </div>
@@ -257,112 +895,28 @@
             );
         }
 
-        // Блок отзывов
+        // Блок отзывов (упрощенная версия)
         function ReviewsSection() {
-            const [reviews, setReviews] = useState([
+            const [reviews] = useState([
                 {
                     id: 1,
                     mentor: 'Дмитрий (JavaScript)',
                     rating: 5,
                     title: 'Отличный ментор!',
-                    text: 'Дмитрий прекрасно объясняет сложные концепции JavaScript. Очень рекомендую для начинающих и продолжающих.',
+                    text: 'Дмитрий прекрасно объясняет сложные концепции JavaScript.',
                     date: '2024-01-20'
-                },
-                {
-                    id: 2,
-                    mentor: 'Ярослав (C++)',
-                    rating: 4,
-                    title: 'Полезные сессии по C++',
-                    text: 'Ярослав помог разобраться с продвинутыми темами C++. Немного сложно для новичков, но очень информативно.',
-                    date: '2024-01-15'
                 }
             ]);
-            const [showModal, setShowModal] = useState(false);
-            const [searchTerm, setSearchTerm] = useState('');
-            const [sortBy, setSortBy] = useState('newest');
-            const [newReview, setNewReview] = useState({
-                mentor: '',
-                rating: 0,
-                title: '',
-                text: ''
-            });
-
-            const filteredReviews = reviews
-                .filter(review => 
-                    review.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    review.text.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    review.mentor.toLowerCase().includes(searchTerm.toLowerCase())
-                )
-                .sort((a, b) => {
-                    switch (sortBy) {
-                        case 'newest':
-                            return new Date(b.date) - new Date(a.date);
-                        case 'oldest':
-                            return new Date(a.date) - new Date(b.date);
-                        case 'rating-high':
-                            return b.rating - a.rating;
-                        case 'rating-low':
-                            return a.rating - b.rating;
-                        default:
-                            return 0;
-                    }
-                });
-
-            const handleAddReview = (e) => {
-                e.preventDefault();
-                const review = {
-                    id: Date.now(),
-                    ...newReview,
-                    date: new Date().toISOString().split('T')[0]
-                };
-                setReviews([review, ...reviews]);
-                setShowModal(false);
-                setNewReview({ mentor: '', rating: 0, title: '', text: '' });
-            };
-
-            const handleDeleteReview = (id) => {
-                if (confirm('Вы уверены, что хотите удалить этот отзыв?')) {
-                    setReviews(reviews.filter(review => review.id !== id));
-                }
-            };
-
-            const setRating = (rating) => {
-                setNewReview({ ...newReview, rating });
-            };
 
             return (
                 <section className="reviews-section" id="reviews">
                     <div className="section-header">
                         <h2>Мои отзывы</h2>
-                        <button className="btn-primary" onClick={() => setShowModal(true)}>
-                            + Написать отзыв
-                        </button>
+                        <button className="btn-primary">+ Написать отзыв</button>
                     </div>
                     
-                    <div className="reviews-controls">
-                        <div className="search-box">
-                            <input 
-                                type="text" 
-                                placeholder="Поиск по отзывам..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
-                            <span className="search-icon">🔍</span>
-                        </div>
-                        <select 
-                            className="sort-select"
-                            value={sortBy}
-                            onChange={(e) => setSortBy(e.target.value)}
-                        >
-                            <option value="newest">Сначала новые</option>
-                            <option value="oldest">Сначала старые</option>
-                            <option value="rating-high">Высокий рейтинг</option>
-                            <option value="rating-low">Низкий рейтинг</option>
-                        </select>
-                    </div>
-
                     <div className="reviews-grid">
-                        {filteredReviews.map(review => (
+                        {reviews.map(review => (
                             <div key={review.id} className="review-card">
                                 <div className="review-header">
                                     <div>
@@ -370,100 +924,13 @@
                                         <div className="review-date">{review.date}</div>
                                     </div>
                                     <div className="review-rating">
-                                        {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
+                                        {'★'.repeat(review.rating)}
                                     </div>
                                 </div>
                                 <div className="review-title">{review.title}</div>
                                 <div className="review-text">{review.text}</div>
-                                <div className="review-actions">
-                                    <button className="btn-edit">Редактировать</button>
-                                    <button 
-                                        className="btn-delete"
-                                        onClick={() => handleDeleteReview(review.id)}
-                                    >
-                                        Удалить
-                                    </button>
-                                </div>
                             </div>
                         ))}
-                    </div>
-
-                    {/* Модальное окно для нового отзыва */}
-                    <div className={`modal ${showModal ? 'show' : ''}`}>
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h3>Новый отзыв</h3>
-                                <button className="close-modal" onClick={() => setShowModal(false)}>
-                                    &times;
-                                </button>
-                            </div>
-                            <form className="review-form" onSubmit={handleAddReview}>
-                                <div className="form-group">
-                                    <label htmlFor="reviewMentor">Ментор</label>
-                                    <select 
-                                        id="reviewMentor"
-                                        value={newReview.mentor}
-                                        onChange={(e) => setNewReview({...newReview, mentor: e.target.value})}
-                                        required
-                                    >
-                                        <option value="">Выберите ментора</option>
-                                        <option value="Дмитрий (JavaScript)">Дмитрий (JavaScript)</option>
-                                        <option value="Ярослав (C++)">Ярослав (C++)</option>
-                                        <option value="Энн (Frontend)">Энн (Frontend)</option>
-                                    </select>
-                                </div>
-                                <div className="form-group">
-                                    <label>Оценка</label>
-                                    <div className="rating-input">
-                                        <div className="stars">
-                                            {[1, 2, 3, 4, 5].map(rating => (
-                                                <span
-                                                    key={rating}
-                                                    className={rating <= newReview.rating ? 'active' : ''}
-                                                    onClick={() => setRating(rating)}
-                                                >
-                                                    {rating <= newReview.rating ? '★' : '☆'}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="reviewTitle">Заголовок отзыва</label>
-                                    <input
-                                        type="text"
-                                        id="reviewTitle"
-                                        placeholder="Краткое описание"
-                                        value={newReview.title}
-                                        onChange={(e) => setNewReview({...newReview, title: e.target.value})}
-                                        required
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="reviewText">Текст отзыва</label>
-                                    <textarea
-                                        id="reviewText"
-                                        placeholder="Поделитесь вашими впечатлениями..."
-                                        rows="5"
-                                        value={newReview.text}
-                                        onChange={(e) => setNewReview({...newReview, text: e.target.value})}
-                                        required
-                                    ></textarea>
-                                </div>
-                                <div className="form-actions">
-                                    <button 
-                                        type="button" 
-                                        className="btn-secondary"
-                                        onClick={() => setShowModal(false)}
-                                    >
-                                        Отмена
-                                    </button>
-                                    <button type="submit" className="btn-primary">
-                                        Опубликовать отзыв
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
                     </div>
                 </section>
             );
@@ -473,8 +940,7 @@
         function SessionsSection() {
             const [sessions] = useState([
                 { id: 1, date: '2024-01-20', mentor: 'Дмитрий', topic: 'JavaScript Advanced', duration: 2, rating: 5 },
-                { id: 2, date: '2024-01-18', mentor: 'Ярослав', topic: 'C++ Memory Management', duration: 1.5, rating: 4 },
-                { id: 3, date: '2024-01-15', mentor: 'Энн', topic: 'React Hooks', duration: 2, rating: 5 }
+                { id: 2, date: '2024-01-18', mentor: 'Ярослав', topic: 'C++ Memory Management', duration: 1.5, rating: 4 }
             ]);
 
             return (
@@ -489,7 +955,6 @@
                                     <th>Тема</th>
                                     <th>Длительность</th>
                                     <th>Оценка</th>
-                                    <th>Действия</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -499,11 +964,7 @@
                                         <td>{session.mentor}</td>
                                         <td>{session.topic}</td>
                                         <td>{session.duration} ч</td>
-                                        <td>{'★'.repeat(session.rating)}{'☆'.repeat(5 - session.rating)}</td>
-                                        <td>
-                                            <button className="btn-edit">✏️</button>
-                                            <button className="btn-delete">🗑️</button>
-                                        </td>
+                                        <td>{'★'.repeat(session.rating)}</td>
                                     </tr>
                                 ))}
                             </tbody>
